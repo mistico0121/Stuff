@@ -167,9 +167,9 @@ def my_dpll(Formula, assignments={}):
 	return False, None
 
 
-def individualTest(filename):
+def individualTest(filename, brute=False):
 
-	testingParse = ParserDimacs("test/uf20-01.cnf")
+	testingParse = ParserDimacs(filename)
 
 	start_dpll = time.time()
 	my_dpll(testingParse)
@@ -177,11 +177,11 @@ def individualTest(filename):
 
 	print(f"TIEMPO DPLL: {(end_dpll-start_dpll)}")
 
-
-	start_brute = time.time()
-	bruteForce(testingParse)
-	end_brute = time.time()
-	print(f"TIEMPO FUERZA BRUTA: {(end_brute-start_brute)}")
+	if brute:
+		start_brute = time.time()
+		bruteForce(testingParse)
+		end_brute = time.time()
+		print(f"TIEMPO FUERZA BRUTA: {(end_brute-start_brute)}")
 
 def complete_Testing():
 
@@ -189,22 +189,26 @@ def complete_Testing():
 	print("Testeando satisfacibles 20\n")
 
 
-	for i in range(5):
+	for i in range(20):
+		file = "../20props satisfacibles/uf20-{i:02d}.cnf"
 		print(f"Test {i}, carpeta: satisfacibles20/uf20-{i:02d}.cnf")
+		individualTest(file, brute=True)
 
-	print("Testeando insatisfacibles 20\n")
+	print("Testeando insatisfacibles 50\n")
 
-	for i in range(15):
-		print(f"Test {i}, carpeta: insatisfacibles20/uf20-0{i}.cnf")
+	for i in range(10):
+		file = "../50props insatisfacibles/uuf50-{i:02d}.cnf"
+		print(f"Test {i}, carpeta: 50props insatisfacibles/uuf50-{i:02d}.cnf")
+		individualTest(file, brute=False)
 
 
 	print("")
-	print("Testeando 50\n")
+	print("Testeando satisfacibles 50\n")
 
-	for i in range(5):
-		print(f"Test {i}, carpeta: satisfacibles50/uf20-0{i}.cnf")
-
-
+	for i in range(10):
+		file = "../50props satisfacibles/uf50-{i:02d}.cnf"
+		print(f"Test {i}, carpeta: 50props insatisfacibles/uf50-{i:02d}.cnf")
+		individualTest(file, brute=False)
 
 complete_Testing()
 
