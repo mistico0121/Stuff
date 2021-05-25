@@ -141,13 +141,46 @@ def example_brute_force(cnf):
 	return False, None
 
 
+# Implementacion de DPLL basada en https://davefernig.com/2018/05/07/solving-sat-in-python/
+def my_dpll(Formula, assignments={}):
+
+	numberOfLiterals = Formula[0]
+	
+	direcciones = Formula[1]
+
+	print(direcciones)
+	print("Direcciones")
+
+	if len(direcciones) == 0:
+		return True, assignments
+
+	if any([len(conjuncion)==0 for conjuncion in direcciones]):
+		return False, None
+
+	variable = __select_literal(direcciones)
+
+	new_cnf = [c for c in direcciones if (variable, True) not in c]
+	new_cnf = [c.difference({(variable, False)}) for c in new_cnf]
+	sat, vals = dpll(new_cnf, {**assignments, **{variable: True}})
+	if sat:
+		return sat, vals
+
+	new_cnf = [c for c in direcciones if (variable, False) not in c]
+	new_cnf = [c.difference({(variable, True)}) for c in new_cnf]
+	sat, vals = dpll(new_cnf, {**assignments, **{variable: False}})
+
+	if sat:
+		return sat, vals
+ 
+	return False, None
+
 exampleCNF = [{("p", False), ("q", False)}, {("p", True), ("r", False)}]
 
 testingParse = ParserDimacs("uf20-01.cnf")
 print(testingParse)
 
 print("DPLL: ")
-print(dpll(testingParse[1]))
+print(my_dpll(testingParse))
 
 print("Fuerza Bruta: ")
 
