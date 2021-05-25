@@ -1,13 +1,5 @@
 import itertools
-
-def notFunction(boolean):
-	if boolean:
-		return False
-	else:
-		return True
-
-def orFunction(a, b):
-	return (a or b)
+import time
 
 def ParserDimacs(filename):
 	
@@ -174,17 +166,48 @@ def my_dpll(Formula, assignments={}):
  
 	return False, None
 
-exampleCNF = [{("p", False), ("q", False)}, {("p", True), ("r", False)}]
 
-testingParse = ParserDimacs("uf20-01.cnf")
-print(testingParse)
+def individualTest(filename):
 
-print("DPLL: ")
-print(my_dpll(testingParse))
+	testingParse = ParserDimacs("test/uf20-01.cnf")
 
-print("Fuerza Bruta: ")
+	start_dpll = time.time()
+	my_dpll(testingParse)
+	end_dpll = time.time()
 
-print(bruteForce(testingParse))
+	print(f"TIEMPO DPLL: {(end_dpll-start_dpll)}")
 
+
+	start_brute = time.time()
+	bruteForce(testingParse)
+	end_brute = time.time()
+	print(f"TIEMPO FUERZA BRUTA: {(end_brute-start_brute)}")
+
+def complete_Testing():
+
+	print("")
+	print("Testeando satisfacibles 20\n")
+
+
+	for i in range(5):
+		print(f"Test {i}, carpeta: satisfacibles20/uf20-{i:02d}.cnf")
+
+	print("Testeando insatisfacibles 20\n")
+
+	for i in range(15):
+		print(f"Test {i}, carpeta: insatisfacibles20/uf20-0{i}.cnf")
+
+
+	print("")
+	print("Testeando 50\n")
+
+	for i in range(5):
+		print(f"Test {i}, carpeta: satisfacibles50/uf20-0{i}.cnf")
+
+
+
+complete_Testing()
+
+# exampleCNF = [{("p", False), ("q", False)}, {("p", True), ("r", False)}]
 # print(example_brute_force(exampleCNF))
 # print(bruteForce([3, exampleCNF]))
