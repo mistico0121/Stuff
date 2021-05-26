@@ -12,7 +12,7 @@ RUN mkdir staticfiles
 
 # install dependencies
 # we use --system flag because we don't need an extra virtualenv
-RUN yum install -y nc.x86_64 gcc python-devel musl-devel
+RUN apt-get update && apt-get install -y netcat gcc python3-dev musl-dev
 
 #PIPFILE
 run pip install --upgrade pip
