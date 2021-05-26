@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+
+
+{% block content %}
+	<div class = 'container'>
+		<form method="POST" action = '/'>
+			{%csrf_token%}
+			{{form}}
+			<button type="submit" class="btn btn-outline-primary" name="Create Thread">Create Thread </button>
+		</form>
+	</div>
+
+	<h2>Current threads</h2>
+
+	{% for obj in threads %}
+		<a href = "{{obj.get_absolute_url}}">
+			<div class = "container post">
+				<p class = "title"><em>{{obj.title}}</em> {{obj.username}}, {{obj.createdAt}} </p>
+				<p>{{obj.text}}</p>
+			</div>
+		</a>
+
+	{% endfor %}
+
+{% endblock %}
+
