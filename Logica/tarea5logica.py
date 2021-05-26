@@ -76,72 +76,26 @@ def bruteForce(Formula):
 		a = set(zip(literals, combinacion))
 
 		if all([bool(disjuncion.intersection(a)) for disjuncion in direcciones]):
-			print (disjuncion)
-			return True, a
+			#return True, a
+			return 1
 	
-	return False
+	return 0
 
 
 def __select_literal(cnf):
     for c in cnf:
         for literal in c:
             return literal[0]
- 
-def dpll(cnf, assignments={}):
- 
-    if len(cnf) == 0:
-        return True, assignments
- 
-    if any([len(c)==0 for c in cnf]):
-        return False, None
- 
-    l = __select_literal(cnf)
- 
-    new_cnf = [c for c in cnf if (l, True) not in c]
-    new_cnf = [c.difference({(l, False)}) for c in new_cnf]
-    sat, vals = dpll(new_cnf, {**assignments, **{l: True}})
-    if sat:
-        return sat, vals
- 
-    new_cnf = [c for c in cnf if (l, False) not in c]
-    new_cnf = [c.difference({(l, True)}) for c in new_cnf]
-    sat, vals = dpll(new_cnf, {**assignments, **{l: False}})
-    if sat:
-        return sat, vals
- 
-    return False, None
 
-
-
-def example_brute_force(cnf):
-
-	print(cnf)
-	literals = set()
-	for conj in cnf:
-		for disj in conj:
-			literals.add(disj[0])
-
-
-	literals = list(literals)
-	n = len(literals)
-	for seq in itertools.product([True, False], repeat=n):
-		a = set(zip(literals, seq))
-
-		if all([bool(disj.intersection(a)) for disj in cnf]):
-			return True, a
-
-	return False, None
-
+def dpll_wrap(Formula):
+	val = my_dpll(Formula[1])
+	if val[0]:
+		return 1
+	return 0
 
 # Implementacion de DPLL basada en https://davefernig.com/2018/05/07/solving-sat-in-python/
-def my_dpll(Formula, assignments={}):
-
-	numberOfLiterals = Formula[0]
+def my_dpll(direcciones, assignments={}):
 	
-	direcciones = Formula[1]
-
-	print(direcciones)
-	print("Direcciones")
 
 	if len(direcciones) == 0:
 		return True, assignments
@@ -153,13 +107,13 @@ def my_dpll(Formula, assignments={}):
 
 	new_cnf = [c for c in direcciones if (variable, True) not in c]
 	new_cnf = [c.difference({(variable, False)}) for c in new_cnf]
-	sat, vals = dpll(new_cnf, {**assignments, **{variable: True}})
+	sat, vals = my_dpll(new_cnf, {**assignments, **{variable: True}})
 	if sat:
 		return sat, vals
 
 	new_cnf = [c for c in direcciones if (variable, False) not in c]
 	new_cnf = [c.difference({(variable, True)}) for c in new_cnf]
-	sat, vals = dpll(new_cnf, {**assignments, **{variable: False}})
+	sat, vals = my_dpll(new_cnf, {**assignments, **{variable: False}})
 
 	if sat:
 		return sat, vals
@@ -172,16 +126,20 @@ def individualTest(filename, brute=False):
 	testingParse = ParserDimacs(filename)
 
 	start_dpll = time.time()
-	my_dpll(testingParse)
+	valdpll = dpll_wrap(testingParse)
+	print(f"Valor test DPLL: {valdpll}")
 	end_dpll = time.time()
 
 	print(f"TIEMPO DPLL: {(end_dpll-start_dpll)}")
 
 	if brute:
 		start_brute = time.time()
-		bruteForce(testingParse)
+		valfb = bruteForce(testingParse)
+		print(f"Valor test FB: {valfb}")
 		end_brute = time.time()
 		print(f"TIEMPO FUERZA BRUTA: {(end_brute-start_brute)}")
+
+	print("")
 
 def complete_Testing():
 
@@ -189,25 +147,25 @@ def complete_Testing():
 	print("Testeando satisfacibles 20\n")
 
 
-	for i in range(20):
-		file = "../20props satisfacibles/uf20-{i:02d}.cnf"
-		print(f"Test {i}, carpeta: satisfacibles20/uf20-{i:02d}.cnf")
+	for i in range(1,21):
+		file = f"20_sat/uf20-0{i}.cnf"
+		print(f"	Test {i}, archivo: uf20-0{i}.cnf")
 		individualTest(file, brute=True)
 
 	print("Testeando insatisfacibles 50\n")
 
-	for i in range(10):
-		file = "../50props insatisfacibles/uuf50-{i:02d}.cnf"
-		print(f"Test {i}, carpeta: 50props insatisfacibles/uuf50-{i:02d}.cnf")
+	for i in range(1,11):
+		file = f"50_unsat/uuf50-0{i}.cnf"
+		print(f"	Test {i}, archivo: uuf50-0{i}.cnf")
 		individualTest(file, brute=False)
 
 
 	print("")
 	print("Testeando satisfacibles 50\n")
 
-	for i in range(10):
-		file = "../50props satisfacibles/uf50-{i:02d}.cnf"
-		print(f"Test {i}, carpeta: 50props insatisfacibles/uf50-{i:02d}.cnf")
+	for i in range(1,11):
+		file = f"50_sat/uf50-0{i}.cnf"
+		print(f"	Test {i}, archivo: uf50-0{i}.cnf")
 		individualTest(file, brute=False)
 
 complete_Testing()
