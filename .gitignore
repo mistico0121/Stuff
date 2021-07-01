@@ -8,3 +8,4 @@
 .env_db.prod
 .env_staging.proxy-companion
 testeando.pem
+data/
